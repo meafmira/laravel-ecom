@@ -42,10 +42,28 @@ Route::group(['prefix' => 'api/v1'], function()
    	$credentials = Input::only('email', 'password');
 
    	if ( ! $token = JWTAuth::attempt($credentials)) {
-       return Response::json(false, 401);
+       return Response::json([ 'error' => 'Wrong email or password' ], 401);
    	}
 
    	return Response::json(compact('token'));
+	});
+
+	Route::get('/current-user', function () {
+		try {
+      if (! $user = JWTAuth::parseToken()->authenticate()) {
+          return response()->json(['error' => 'user_not_found'], 404);
+      }
+    }
+		catch (Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+      return response()->json([ 'error' => $e->getMessage() ], $e->getStatusCode());
+    }
+		catch (Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+      return response()->json([ 'error' => $e->getMessage() ], $e->getStatusCode());
+    }
+		catch (Tymon\JWTAuth\Exceptions\JWTException $e) {
+      return response()->json([ 'error' => $e->getMessage() ], $e->getStatusCode());
+    }
+    return response()->json(compact('user'));
 	});
 
 	Route::get('/restricted', [ 'middleware' => 'jwt.auth', function () {
