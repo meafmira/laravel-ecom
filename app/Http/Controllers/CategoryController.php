@@ -3,6 +3,7 @@
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Category;
+use App\Param;
 #use Intervention\Image;
 
 use Illuminate\Http\Request;
@@ -43,9 +44,21 @@ class CategoryController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function store()
+	public function store(Request $request)
 	{
-		//
+		$categoryTitle = $request->input('title');
+		$params = $request->input('params');
+		$categoryParams = [];
+		foreach ($params as $param) {
+			$categoryParam = new Param();
+			$categoryParam->name = $param['name'];
+			$categoryParams[] = $categoryParam;
+		}
+		$category = new Category();
+		$category->title = $categoryTitle;
+		$category->save();
+		$category->params()->saveMany($categoryParams);
+		return $category;
 	}
 
 	/**
@@ -56,7 +69,7 @@ class CategoryController extends Controller {
 	 */
 	public function show(Category $category)
 	{
-		return $category->load('products');
+		return $category->load('products')->load('params');
 	}
 
 	public function products(Request $request, $category) {
@@ -86,9 +99,35 @@ class CategoryController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
+	public function update(Request $request, Category $category)
 	{
-		//
+		$categoryParams = [];
+		$params = $request->input('params');
+		$paramIds = [];
+		foreach ($params as $param) {
+			if (!isset($param['id'])) {
+				$categoryParam = new Param();
+				$categoryParam->name = $param['name'];
+				$categoryParam->category_id = $category->id;
+				$categoryParam->save();
+				$paramIds[] = $categoryParam->id;
+				$categoryParams[] = $categoryParam;
+			}
+			else {
+				$categoryParam = Param::find($param['id']);
+				$categoryParam->name = $param['name'];
+				$categoryParam->save();
+				$paramIds[] = $categoryParam->id;
+			}
+		}
+		$category->title = $request->input('title');
+
+		Param::where('category_id', $category->id)
+			->whereNotIn('id', $paramIds)
+			->delete();
+
+		$category->save();
+		return $category;
 	}
 
 	/**
@@ -97,9 +136,10 @@ class CategoryController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function destroy($id)
+	public function destroy(Category $category)
 	{
-		//
+		$category->delete();
+		return $category;
 	}
 
 }

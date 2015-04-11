@@ -33,9 +33,8 @@ class PostController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function store()
+	public function store(Request $request)
 	{
-		//
 	}
 
 	/**
@@ -66,9 +65,12 @@ class PostController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
+	public function update(Request $request, Post $post)
 	{
-		//
+		$post->title = $request->input('title');
+		$post->text = $request->input('text');
+		$post->save();
+		return $post;
 	}
 
 	/**

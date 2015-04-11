@@ -15,7 +15,7 @@ class PageController extends Controller {
 	 */
 	public function index()
 	{
-		//
+		return Page::all();
 	}
 
 	/**
@@ -66,9 +66,12 @@ class PageController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
+	public function update(Request $request, Page $page)
 	{
-		//
+		$page->title = $request->input('title');
+		$page->text = $request->input('text');
+		$page->save();
+		return $page;
 	}
 
 	/**

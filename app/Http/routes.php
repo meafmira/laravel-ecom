@@ -39,13 +39,13 @@ Route::group(['prefix' => 'api/v1'], function()
   });
 
 	Route::post('/signin', function () {
-   	$credentials = Input::only('email', 'password');
+	 	$credentials = Input::only('email', 'password');
+		
+	 	if ( ! $token = JWTAuth::attempt($credentials)) {
+	    return Response::json([ 'error' => 'Wrong email or password' ], 401);
+	 	}
 
-   	if ( ! $token = JWTAuth::attempt($credentials)) {
-       return Response::json([ 'error' => 'Wrong email or password' ], 401);
-   	}
-
-   	return Response::json(compact('token'));
+	 	return Response::json(compact('token'));
 	});
 
 	Route::get('/current-user', function () {
