@@ -35,6 +35,15 @@ class PostController extends Controller {
 	 */
 	public function store(Request $request)
 	{
+		$title = $request->input('title');
+		$text = $request->input('text');
+		$category = $request->input('post_category_id');
+		$post = new Post();
+		$post->title = $title;
+		$post->text = $text;
+		$post->post_category_id = $category;
+		$post->save();
+		return $post;
 	}
 
 	/**
@@ -79,9 +88,10 @@ class PostController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function destroy($id)
+	public function destroy(Post $post)
 	{
-		//
+		$post->delete();
+		return $post;
 	}
 
 }

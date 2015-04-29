@@ -40,7 +40,7 @@ Route::group(['prefix' => 'api/v1'], function()
 
 	Route::post('/signin', function () {
 	 	$credentials = Input::only('email', 'password');
-		
+
 	 	if ( ! $token = JWTAuth::attempt($credentials)) {
 	    return Response::json([ 'error' => 'Wrong email or password' ], 401);
 	 	}
@@ -74,6 +74,7 @@ Route::group(['prefix' => 'api/v1'], function()
 	Route::get('categories/random', 'CategoryController@random');
 	Route::resource('categories', 'CategoryController');
 	Route::get('products/latest', 'ProductController@latest');
+	Route::post('products/{productId}/images', 'ProductController@images');
 	Route::resource('products', 'ProductController');
 	Route::get('/test', function () {
 		$image = Image::make('images/image.jpg')
@@ -85,4 +86,6 @@ Route::group(['prefix' => 'api/v1'], function()
 	Route::resource('pages', 'PageController');
 	Route::resource('posts', 'PostController');
 	Route::resource('post-categories', 'PostCategoryController');
+	Route::resource('site-values', 'SiteValueController');
+	Route::resource('search', 'SearchController');
 });

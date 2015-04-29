@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Product;
 use App\Param;
 use App\ParamValue;
+use App\Image;
 
 use Illuminate\Http\Request;
 
@@ -60,7 +61,6 @@ class ProductController extends Controller {
 		}
 		$product->save();
 		$product->params()->sync($paramValueIds);
-		$product->images()->sync([1]);
 		return $product;
 	}
 
@@ -144,9 +144,23 @@ class ProductController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function destroy($id)
+	public function destroy(Product $product)
 	{
-		//
+		$product->delete();
+		return $product;
+	}
+
+	public function images(Request $request, $productId) {
+		$file = $request->file('file');
+		$fileName = uniqid('product-image').'.'.$file->guessExtension();
+		$file->move('images/', $fileName);
+		$path = 'images/'.$fileName;
+		$productImage = new Image();
+		$productImage->path = $path;
+		$productImage->save();
+		$product = Product::find($productId);
+		$product->images()->attach($productImage->id);
+		return $product;
 	}
 
 }

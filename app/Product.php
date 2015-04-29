@@ -12,7 +12,6 @@ class Product extends Model {
 
 	public function getThumbAttribute() {
 		return $this->morphToMany('App\Image', 'imageable')
-			->where('type', 'thumb')
 			->first();
 	}
 
