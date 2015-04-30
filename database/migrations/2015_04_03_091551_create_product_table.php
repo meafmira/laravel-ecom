@@ -17,11 +17,11 @@ class CreateProductTable extends Migration {
 			$table->increments('id');
 			$table->timestamps();
 			$table->softDeletes();
-			$table->string('title');
-			$table->string('description')->nullable();
-			$table->integer('price');
-			$table->integer('discount')->nullable();
-			$table->integer('category_id');
+			$table->string('title'); //название продукта
+			$table->string('description')->nullable(); //описание продукта
+			$table->integer('price'); //цена продукта
+			$table->integer('discount')->nullable(); //скидка на продукт
+			$table->integer('category_id'); //категория, которой принадлежит продукт
 		});
 	}
 

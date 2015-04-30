@@ -17,9 +17,9 @@ class CreatePostsTable extends Migration {
 			$table->increments('id');
 			$table->timestamps();
 			$table->softDeletes();
-			$table->string('title');
-			$table->text('text');
-			$table->integer('category_id');
+			$table->string('title'); //заголовок поста
+			$table->text('text'); //текст поста
+			$table->integer('category_id'); //id категории которой принадлежит пост
 		});
 	}
 

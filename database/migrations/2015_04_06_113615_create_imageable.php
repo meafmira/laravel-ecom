@@ -16,9 +16,9 @@ class CreateImageable extends Migration {
 		{
 			$table->increments('id');
 			$table->timestamps();
-			$table->integer('image_id');
-			$table->integer('imageable_id');
-			$table->string('imageable_type');
+			$table->integer('image_id'); //id изображения
+			$table->integer('imageable_id'); //id сущности к которой относится изображение
+			$table->string('imageable_type'); //тип сущности к которой относится изображение (App\Product или App\Post)
 		});
 	}
 

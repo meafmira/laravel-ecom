@@ -16,8 +16,8 @@ class ParamValueProduct extends Migration {
 		{
 			$table->increments('id');
 			$table->timestamps();
-			$table->integer('product_id');
-			$table->integer('param_value_id');
+			$table->integer('product_id'); //id связанного продукта
+			$table->integer('param_value_id'); //id связанного значения параметра
 		});
 	}
 

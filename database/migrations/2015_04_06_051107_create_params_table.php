@@ -17,8 +17,8 @@ class CreateParamsTable extends Migration {
 			$table->increments('id');
 			$table->timestamps();
 			$table->softDeletes();
-			$table->integer('category_id')->nullable();
-			$table->string('name');
+			$table->integer('category_id')->nullable(); //id категории которой принадлежит параметр
+			$table->string('name'); //название параметра
 		});
 	}
 

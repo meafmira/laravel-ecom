@@ -17,8 +17,8 @@ class CreateCategoryTable extends Migration {
 			$table->increments('id');
 			$table->timestamps();
 			$table->softDeletes();
-			$table->string('title');
-			$table->text('description')->nullable();
+			$table->string('title'); //называние категории
+			$table->text('description')->nullable(); //описание категории
 		});
 	}
 

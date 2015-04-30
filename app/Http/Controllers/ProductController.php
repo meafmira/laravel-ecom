@@ -16,11 +16,14 @@ class ProductController extends Controller {
 	 *
 	 * @return Response
 	 */
+
+	//получение всех товаров
 	public function index()
 	{
 		return Product::all();
 	}
 
+	//последние 3 товара
 	public function latest() {
 		return Product::orderBy('created_at', 'desc')
 			->take(3)
@@ -42,9 +45,13 @@ class ProductController extends Controller {
 	 *
 	 * @return Response
 	 */
+
+	//сохранение товара
 	public function store(Request $request)
 	{
+		//создаем товар
 		$product = new Product();
+		//получаем необходимые параметры
 		$product->title = $request->input('title');
 		$product->description = $request->input('description');
 		$product->price = $request->input('price');
@@ -53,13 +60,16 @@ class ProductController extends Controller {
 		$params = $request->input('params');
 		$paramValueIds = [];
 		foreach ($params as $param) {
+			//создаем значения параметров товара
 			$paramValue = new ParamValue();
 			$paramValue->param_id = $param['param_id'];
 			$paramValue->value = $param['value'];
 			$paramValue->save();
 			$paramValueIds[] = $paramValue->id;
 		}
+		//сохраняем товар
 		$product->save();
+		//сохраняем связи товара со значениями параметров
 		$product->params()->sync($paramValueIds);
 		return $product;
 	}
@@ -70,12 +80,14 @@ class ProductController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
+
+	//получение одного товара
 	public function show(Product $product)
 	{
-		$result = $product
-			->load('category')
-			->load('images')
-			->load('params.param');
+		$result = $product //товар
+			->load('category') //загружаем категорию
+			->load('images') //загружаем изображения
+			->load('params.param'); //загружаем параметры
 
 		return $result;
 	}
@@ -97,32 +109,44 @@ class ProductController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
+
+	//изменение товара
 	public function update(Request $request, Product $product)
 	{
 		$params = $request->params;
-		$productParamValueIds = [];
+		$productParamValueIds = []; //значения параметров
 		foreach ($params as $param) {
 			$paramValue = ParamValue::where('param_id', $param['param_id'])->first();
+			//если значение уже существует
 			if ($paramValue) {
+				//если новое значение не соответствует старому
 				if ($paramValue->value != $param['value']) {
+					//создаем новое значени
 					$newValue = new ParamValue();
 					$newValue->value = $param['value'];
 					$newValue->param_id = $param['param_id'];
+					//сохраняем значение
 					$newValue->save();
 					$productParamValueIds[] = $newValue->id;
 				}
+				//если значения совпадают
 				else {
+					//добавляем в список значений параметров товара
 					$productParamValueIds[] = $paramValue->id;
 				}
 			}
+			//если значение не сущетвует
 			else {
+				//создаем новое значение
 				$newValue = new ParamValue();
 				$newValue->value = $param['value'];
 				$newValue->param_id = $param['param_id'];
+				//сохраняем значения
 				$newValue->save();
 				$productParamValueIds[] = $newValue->id;
 			}
 		}
+		//получаем id изображений
 		$images = $request->images;
 		$productImagesIds = [];
 		foreach ($images as $image) {
@@ -132,8 +156,11 @@ class ProductController extends Controller {
 		$product->price = $request->price;
 		$product->discount = $request->discount;
 		$product->description = $request->description;
+		//связь между значениями параметров и товаром
 		$product->params()->sync($productParamValueIds);
+		//связь между товаром и изображениями
 		$product->images()->sync($productImagesIds);
+		//сохраняем товар
 		$product->save();
 		return $product;
 	}
@@ -144,21 +171,32 @@ class ProductController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
+
+	//удаление товара
 	public function destroy(Product $product)
 	{
 		$product->delete();
 		return $product;
 	}
 
+	//добавление изображений товару
 	public function images(Request $request, $productId) {
+		//получаем файл
 		$file = $request->file('file');
+		//даем ему новое уникальное имя
 		$fileName = uniqid('product-image').'.'.$file->guessExtension();
+		//перемещаем файл
 		$file->move('images/', $fileName);
+		//путь к файлу
 		$path = 'images/'.$fileName;
+		//создаем новое изображение
 		$productImage = new Image();
 		$productImage->path = $path;
+		//сохраняем изображение
 		$productImage->save();
+		//получаем товар по его id
 		$product = Product::find($productId);
+		//присоединяем изображение к товару
 		$product->images()->attach($productImage->id);
 		return $product;
 	}

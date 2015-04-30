@@ -16,8 +16,8 @@ class CreateParamValuesTable extends Migration {
 		{
 			$table->increments('id');
 			$table->timestamps();
-			$table->integer('param_id');
-			$table->string('value');
+			$table->integer('param_id'); //id параметра которому принадлежит значение
+			$table->string('value'); //значение параметра
 		});
 	}
 

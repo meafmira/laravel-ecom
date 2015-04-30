@@ -16,9 +16,9 @@ class CreateImagesTable extends Migration {
 		{
 			$table->increments('id');
 			$table->timestamps();
-			$table->string('path');
-			$table->integer('product_id')->nullable();
-			$table->string('type')->nullable();
+			$table->string('path'); //путь к изображению
+			$table->integer('product_id')->nullable(); //id товара к которому принадлежит изображение
+			$table->string('type')->nullable(); //тип изображения
 		});
 	}
 

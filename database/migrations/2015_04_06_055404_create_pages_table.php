@@ -17,8 +17,8 @@ class CreatePagesTable extends Migration {
 			$table->increments('id');
 			$table->timestamps();
 			$table->softDeletes();
-			$table->text('text');
-			$table->string('title');
+			$table->text('text'); //текст страницы
+			$table->string('title'); //заголовок страницы
 		});
 	}
 
